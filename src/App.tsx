@@ -1,23 +1,21 @@
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import {
-  AppBar,
   Box,
   Button,
   Container,
   CssBaseline,
-  Link,
   Stack,
   ThemeProvider,
-  Toolbar,
   Typography,
   createTheme,
 } from "@mui/material";
 import { motion, useReducedMotion, type Variants } from "motion/react";
 import { useState } from "react";
-import DownloadDialog from "./DownloadDialog";
 import DocsPage from "./DocsPage";
 import InstallWizard from "./InstallWizard";
+import OpenSourceFooter from "./components/OpenSourceFooter";
+import SiteHeader from "./components/SiteHeader";
 
 const theme = createTheme({
   palette: {
@@ -65,10 +63,8 @@ const MotionContainer = motion.create(Container);
 
 function App() {
   const shouldReduceMotion = useReducedMotion();
-  const [isDownloadDialogOpen, setDownloadDialogOpen] = useState(false);
   const [isWizardOpen, setWizardOpen] = useState(false);
-  const handleDownloadClick = () => setDownloadDialogOpen(true);
-  const handleDownloadDialogClose = () => setDownloadDialogOpen(false);
+  const handleDownloadClick = () => setWizardOpen(true);
   const handleGetStartedClick = () => setWizardOpen(true);
   const handleWizardClose = () => setWizardOpen(false);
   const heroCopyVariants: Variants = {
@@ -96,29 +92,7 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <DocsPage />
-        <Typography
-          sx={{
-            position: "fixed",
-            bottom: 8,
-            right: 12,
-            fontSize: "0.7rem",
-            color: "text.secondary",
-            opacity: 0.45,
-            zIndex: 9999,
-          }}
-        >
-          this website is{" "}
-          <Link
-            href="https://github.com/monolabsdev/poly-ui"
-            target="_blank"
-            rel="noopener noreferrer"
-            underline="hover"
-            sx={{ color: "inherit", fontSize: "inherit" }}
-          >
-            open source
-          </Link>
-          .
-        </Typography>
+        <OpenSourceFooter />
       </ThemeProvider>
     );
   }
@@ -134,69 +108,7 @@ function App() {
           bgcolor: "background.default",
         }}
       >
-        <AppBar
-          elevation={0}
-          position="fixed"
-          color="transparent"
-          sx={{ inset: "0 0 auto", px: { xs: 1, md: 3 }, py: 1 }}
-        >
-          <Toolbar
-            disableGutters
-            sx={{ display: "flex", justifyContent: "space-between" }}
-          >
-            <Link
-              href="/"
-              aria-label="Poly UI home"
-              underline="none"
-              color="text.primary"
-              sx={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 1.5,
-                width: "fit-content",
-                fontWeight: 700,
-              }}
-            >
-              <Box
-                component="img"
-                src="/assets/openbench-logo.svg"
-                alt=""
-                sx={{ width: 33, height: 33, borderRadius: 1.2 }}
-              />
-              Poly UI
-            </Link>
-            <Button
-              href="/docs"
-              sx={{
-                ml: "auto",
-                mr: 1,
-                minHeight: 0,
-                color: "text.primary",
-                py: 0.6,
-                px: 1.25,
-                fontSize: ".85rem",
-              }}
-            >
-              Docs
-            </Button>
-            <Button
-              variant="contained"
-              onClick={handleGetStartedClick}
-              sx={{
-                bgcolor: "#171717",
-                color: "#fff",
-                minHeight: 0,
-                py: 0.6,
-                px: 1.75,
-                fontSize: ".85rem",
-                borderRadius: 999,
-                "&:hover": { bgcolor: "#171717" },
-              }}
-            >
-              Get Started
-            </Button>
-          </Toolbar>
-        </AppBar>
+        <SiteHeader onGetStarted={handleGetStartedClick} />
 
         <Box
           id="hero"
@@ -340,31 +252,8 @@ function App() {
           </MotionContainer>
         </Box>
       </Box>
-      <DownloadDialog open={isDownloadDialogOpen} onClose={handleDownloadDialogClose} />
       <InstallWizard open={isWizardOpen} onClose={handleWizardClose} />
-      <Typography
-        sx={{
-          position: "fixed",
-          bottom: 8,
-          right: 12,
-          fontSize: "0.7rem",
-          color: "text.secondary",
-          opacity: 0.45,
-          zIndex: 9999,
-        }}
-      >
-        this website is{" "}
-        <Link
-          href="https://github.com/monolabsdev/poly-ui"
-          target="_blank"
-          rel="noopener noreferrer"
-          underline="hover"
-          sx={{ color: "inherit", fontSize: "inherit" }}
-        >
-          open source
-        </Link>
-        .
-      </Typography>
+      <OpenSourceFooter />
     </ThemeProvider>
   );
 }

@@ -1,17 +1,14 @@
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 import {
-  AppBar,
   Box,
   Button,
   Container,
-  Divider,
   Link,
   Stack,
-  Toolbar,
   Typography,
 } from "@mui/material";
+import SiteHeader from "./components/SiteHeader";
 
 const sections = [
   { id: "introduction", label: "Introduction" },
@@ -83,46 +80,7 @@ const bodyCopy = {
 export default function DocsPage() {
   return (
     <Box component="main" sx={{ minHeight: "100svh", bgcolor: "background.default" }}>
-      <AppBar
-        elevation={0}
-        position="sticky"
-        color="transparent"
-        sx={{
-          borderBottom: "1px solid rgba(23, 23, 23, 0.08)",
-          bgcolor: "rgba(251, 251, 248, 0.9)",
-          backdropFilter: "blur(18px)",
-          px: { xs: 1, md: 3 },
-        }}
-      >
-        <Toolbar disableGutters sx={{ minHeight: "64px !important" }}>
-          <Link
-            href="/"
-            aria-label="Poly UI home"
-            underline="none"
-            color="text.primary"
-            sx={{ display: "inline-flex", alignItems: "center", gap: 1.25, fontWeight: 700 }}
-          >
-            <Box
-              component="img"
-              src="/assets/openbench-logo.svg"
-              alt=""
-              sx={{ width: 31, height: 31, borderRadius: 1.2 }}
-            />
-            Poly UI
-          </Link>
-          <Divider orientation="vertical" flexItem sx={{ mx: 2, my: 2.25 }} />
-          <Typography sx={{ color: "text.secondary", fontSize: ".9rem", fontWeight: 600 }}>
-            Docs
-          </Typography>
-          <Button
-            href="/"
-            startIcon={<ArrowBackIcon />}
-            sx={{ ml: "auto", minHeight: 0, color: "text.secondary", fontSize: ".85rem" }}
-          >
-            Back home
-          </Button>
-        </Toolbar>
-      </AppBar>
+      <SiteHeader page="docs" />
 
       <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3 } }}>
         <Box

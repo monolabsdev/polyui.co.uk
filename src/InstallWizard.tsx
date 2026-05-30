@@ -4,9 +4,11 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
+import ButtonBase from "@mui/material/ButtonBase";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
+import Link from "@mui/material/Link";
 import { useEffect, useMemo, useState } from "react";
 import {
   fetchRelease,
@@ -56,6 +58,56 @@ interface InstallWizardProps {
 }
 
 type Step = "choose" | "downloading";
+
+interface InstallerOptionProps {
+  asset: Asset;
+  description: string;
+  label: string;
+  onSelect: (asset: Asset) => void;
+}
+
+function InstallerOption({ asset, description, label, onSelect }: InstallerOptionProps) {
+  return (
+    <ButtonBase
+      onClick={() => onSelect(asset)}
+      sx={{
+        display: "block",
+        flex: 1,
+        minWidth: 0,
+        border: "1px solid rgba(23, 23, 23, 0.1)",
+        borderRadius: 2,
+        p: 2.5,
+        textAlign: "left",
+        transition: "border-color .15s, background-color .15s",
+        "&:hover, &:focus-visible": {
+          borderColor: "rgba(23, 23, 23, 0.3)",
+          bgcolor: "rgba(23, 23, 23, 0.025)",
+        },
+      }}
+    >
+      <Typography sx={{ mb: 0.25, fontWeight: 600 }}>{label}</Typography>
+      <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+        {description}
+      </Typography>
+      <Box
+        component="span"
+        sx={{
+          display: "block",
+          borderRadius: 999,
+          bgcolor: "#171717",
+          color: "#fff",
+          px: 2,
+          py: 1,
+          textAlign: "center",
+          fontSize: ".82rem",
+          fontWeight: 700,
+        }}
+      >
+        Download
+      </Box>
+    </ButtonBase>
+  );
+}
 
 export default function InstallWizard({ open, onClose }: InstallWizardProps) {
   const [assets, setAssets] = useState<Asset[]>([]);
@@ -115,7 +167,16 @@ export default function InstallWizard({ open, onClose }: InstallWizardProps) {
       onClose={onClose}
       maxWidth="sm"
       fullWidth
-      slotProps={{ paper: { sx: { borderRadius: 3, p: 1 } } }}
+      slotProps={{
+        paper: {
+          sx: {
+            width: { xs: "calc(100% - 2rem)", sm: "100%" },
+            m: { xs: 2, sm: 4 },
+            borderRadius: 3,
+            p: { xs: 0.25, sm: 1 },
+          },
+        },
+      }}
     >
       {loading ? (
         <DialogContent sx={{ display: "grid", placeItems: "center", py: 6 }}>
@@ -181,77 +242,41 @@ export default function InstallWizard({ open, onClose }: InstallWizardProps) {
             </Typography>
             <Stack direction={{ xs: "column", sm: "row" }} gap={2}>
               {standaloneAsset && info.standalone && (
-                <Box
-                  sx={{
-                    flex: 1,
-                    p: 2.5,
-                    borderRadius: 2,
-                    border: "1px solid rgba(23, 23, 23, 0.1)",
-                    cursor: "pointer",
-                    transition: "border-color .15s",
-                    "&:hover": { borderColor: "rgba(23, 23, 23, 0.3)" },
-                  }}
-                  onClick={() => handleSelect(standaloneAsset)}
-                >
-                  <Typography sx={{ fontWeight: 600, mb: 0.25 }}>
-                    {info.standalone.label}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-                    {info.standalone.desc}
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    fullWidth
-                    size="small"
-                    sx={{
-                      bgcolor: "#171717",
-                      color: "#fff",
-                      "&:hover": { bgcolor: "#171717" },
-                    }}
-                  >
-                    Download
-                  </Button>
-                </Box>
+                <InstallerOption
+                  asset={standaloneAsset}
+                  description={info.standalone.desc}
+                  label={info.standalone.label}
+                  onSelect={handleSelect}
+                />
               )}
               {ollamaAsset && info.withOllama && (
-                <Box
-                  sx={{
-                    flex: 1,
-                    p: 2.5,
-                    borderRadius: 2,
-                    border: "1px solid rgba(23, 23, 23, 0.1)",
-                    cursor: "pointer",
-                    transition: "border-color .15s",
-                    "&:hover": { borderColor: "rgba(23, 23, 23, 0.3)" },
-                  }}
-                  onClick={() => handleSelect(ollamaAsset)}
-                >
-                  <Typography sx={{ fontWeight: 600, mb: 0.25 }}>
-                    {info.withOllama.label}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
-                    {info.withOllama.desc}
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    fullWidth
-                    size="small"
-                    sx={{
-                      bgcolor: "#171717",
-                      color: "#fff",
-                      "&:hover": { bgcolor: "#171717" },
-                    }}
-                  >
-                    Download
-                  </Button>
-                </Box>
+                <InstallerOption
+                  asset={ollamaAsset}
+                  description={info.withOllama.desc}
+                  label={info.withOllama.label}
+                  onSelect={handleSelect}
+                />
               )}
             </Stack>
+            <Link
+              href="/docs"
+              underline="hover"
+              sx={{
+                display: "block",
+                textAlign: "center",
+                mt: 1.5,
+                color: "text.secondary",
+                fontSize: ".82rem",
+              }}
+              onClick={onClose}
+            >
+              Not sure? Read the docs
+            </Link>
             <Button
               variant="text"
               fullWidth
               onClick={onClose}
-              sx={{ mt: 2, color: "text.secondary" }}
+              sx={{ mt: 1, color: "text.secondary" }}
             >
               Not now
             </Button>

@@ -3,6 +3,11 @@ export interface Asset {
   browser_download_url: string;
 }
 
+export interface ReleaseInfo {
+  tagName: string;
+  htmlUrl: string;
+}
+
 export type OsType = "windows" | "macos" | "linux" | "unknown";
 
 export function detectOs(): OsType {
@@ -55,4 +60,16 @@ export async function fetchRelease(signal: AbortSignal): Promise<Asset[]> {
     if (r.assets?.length > 0) return r.assets;
   }
   return [];
+}
+
+export async function fetchLatestRelease(signal: AbortSignal): Promise<ReleaseInfo | null> {
+  const res = await fetch(
+    "https://api.github.com/repos/monolabsdev/poly-ui/releases?per_page=1",
+    { signal }
+  );
+  if (!res.ok) throw new Error(`GitHub API: ${res.status}`);
+  const releases = await res.json();
+  const latest = releases[0];
+  if (!latest?.tag_name) return null;
+  return { tagName: latest.tag_name, htmlUrl: latest.html_url };
 }

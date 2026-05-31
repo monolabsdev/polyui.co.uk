@@ -140,34 +140,24 @@ export default function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box key={pathname} sx={{ minHeight: "100svh" }}>
-        {isDocs ? (
-          <>
-            <DocsPage />
-            <OpenSourceFooter />
-          </>
-        ) : (
-          <HomePage />
-        )}
-      </Box>
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         <motion.div
-          key={`blur-${pathname}`}
-          aria-hidden="true"
-          initial={shouldReduceMotion ? false : { opacity: 1, backdropFilter: "blur(6px)" }}
-          animate={{ opacity: 0, backdropFilter: "blur(0px)" }}
-          transition={{
-            duration: shouldReduceMotion ? 0 : 0.36,
-            ease: [0.22, 1, 0.36, 1],
-          }}
-          style={{
-            position: "fixed",
-            inset: 0,
-            zIndex: 1000,
-            pointerEvents: "none",
-            willChange: "opacity, backdrop-filter",
-          }}
-        />
+          key={pathname}
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -12 }}
+          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          style={{ minHeight: "100svh" }}
+        >
+          {isDocs ? (
+            <>
+              <DocsPage />
+              <OpenSourceFooter />
+            </>
+          ) : (
+            <HomePage />
+          )}
+        </motion.div>
       </AnimatePresence>
     </ThemeProvider>
   );

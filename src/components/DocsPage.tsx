@@ -143,8 +143,8 @@ export default function DocsPage() {
               Set up Poly UI.
             </Typography>
             <Typography sx={{ ...bodyCopy, maxWidth: "38rem", mt: 2, mb: 3.5 }}>
-              Install Poly UI, connect it to Ollama, and start chatting with a
-              local model in a few minutes.
+              Install Poly UI, connect it to a provider, and start chatting
+              with a local model in a few minutes.
             </Typography>
 
             <Box
@@ -153,21 +153,21 @@ export default function DocsPage() {
                 display: "flex",
                 gap: 1.5,
                 mb: 6,
-                border: "1px solid rgba(173, 116, 26, 0.28)",
+                border: "1px solid rgba(26, 139, 173, 0.28)",
                 borderRadius: 1.5,
-                bgcolor: "rgba(255, 248, 225, 0.72)",
+                bgcolor: "rgba(225, 248, 255, 0.72)",
                 px: 2,
                 py: 1.75,
               }}
             >
-              <WarningAmberRoundedIcon sx={{ mt: 0.15, color: "#9a681d", fontSize: 20 }} />
+              <WarningAmberRoundedIcon sx={{ mt: 0.15, color: "#1d7a9a", fontSize: 20 }} />
               <Box>
-                <Typography sx={{ color: "#714c18", fontSize: ".9rem", fontWeight: 700 }}>
-                  Ollama is the only supported provider at the moment
+                <Typography sx={{ color: "#184c71", fontSize: ".9rem", fontWeight: 700 }}>
+                  Multi-provider support is now available
                 </Typography>
-                <Typography sx={{ mt: 0.35, color: "#795b2d", fontSize: ".88rem", lineHeight: 1.65 }}>
-                  Poly UI currently connects to local models through Ollama.
-                  Support for other providers is planned, but is not available yet.
+                <Typography sx={{ mt: 0.35, color: "#2d5b79", fontSize: ".88rem", lineHeight: 1.65 }}>
+                  Poly UI now supports multiple backends alongside Ollama.
+                  Switch between providers from the settings panel.
                 </Typography>
               </Box>
             </Box>
@@ -175,9 +175,9 @@ export default function DocsPage() {
             <Section id="introduction" title="Introduction">
               <Typography sx={bodyCopy}>
                 Poly UI is a desktop interface for running private conversations
-                with local language models. Your model runs through Ollama on your
+                with local language models. Your model runs locally on your
                 machine, so you can use Poly UI without sending chat content to a
-                hosted model provider.
+                hosted provider.
               </Typography>
             </Section>
 
@@ -187,7 +187,7 @@ export default function DocsPage() {
                 <li><Typography sx={bodyCopy}>A Windows x64 PC or an Apple Silicon Mac.</Typography></li>
                 <li><Typography sx={bodyCopy}>Enough memory for the model you plan to run. Smaller models are the best place to start.</Typography></li>
                 <li><Typography sx={bodyCopy}>An internet connection for the initial download and for pulling models.</Typography></li>
-                <li><Typography sx={bodyCopy}>Ollama, unless you choose the installer that includes it.</Typography></li>
+                <li><Typography sx={bodyCopy}>A local model provider such as Ollama, unless you choose the installer that includes it.</Typography></li>
               </Box>
               <Typography sx={{ ...bodyCopy, mt: 1.5 }}>
                 Linux builds are not available yet.

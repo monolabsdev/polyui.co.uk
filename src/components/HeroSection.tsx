@@ -136,8 +136,8 @@ export default function HeroSection({ onDownload, shouldAnimate = true }: HeroSe
               lineHeight: 1.6,
             }}
           >
-            Use Ollama from a simple interface built for private, everyday
-            conversations with local models.
+            A clean interface for private, everyday conversations with
+            local models — multi-provider support included.
           </Typography>
         </motion.div>
         <motion.div variants={heroTextVariants}>

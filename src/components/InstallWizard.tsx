@@ -18,7 +18,7 @@ import {
   OS_LABEL,
   type Asset,
   type OsType,
-} from "./releases";
+} from "../releases";
 
 const INSTALLER_INFO: Record<
   OsType,
@@ -168,11 +168,17 @@ export default function InstallWizard({ open, onClose }: InstallWizardProps) {
       maxWidth="sm"
       fullWidth
       slotProps={{
+        backdrop: {
+          sx: {
+            backgroundColor: "rgba(251, 251, 248, 0.5)",
+            backdropFilter: "blur(4px)",
+          },
+        },
         paper: {
           sx: {
             width: { xs: "calc(100% - 2rem)", sm: "100%" },
             m: { xs: 2, sm: 4 },
-            borderRadius: 3,
+            borderRadius: "12px",
             p: { xs: 0.25, sm: 1 },
           },
         },

@@ -8,7 +8,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import SiteHeader from "./components/SiteHeader";
+import SiteHeader from "./SiteHeader";
 
 const sections = [
   { id: "introduction", label: "Introduction" },

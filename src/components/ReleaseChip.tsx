@@ -1,7 +1,7 @@
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
-import { fetchLatestRelease, type ReleaseInfo } from "./releases";
+import { fetchLatestRelease, type ReleaseInfo } from "../releases";
 
 export default function ReleaseChip() {
   const [release, setRelease] = useState<ReleaseInfo | null>(null);

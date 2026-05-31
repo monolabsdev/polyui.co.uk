@@ -1,105 +1,101 @@
-import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
-import GitHubIcon from "@mui/icons-material/GitHub";
-import {
-  Box,
-  Button,
-  Container,
-  CssBaseline,
-  Stack,
-  ThemeProvider,
-  Typography,
-  createTheme,
-} from "@mui/material";
-import { motion, useReducedMotion, type Variants } from "motion/react";
-import { useState } from "react";
-import DocsPage from "./DocsPage";
-import InstallWizard from "./InstallWizard";
+import { Box, CssBaseline, ThemeProvider } from "@mui/material";
+import { useEffect, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import DocsPage from "./components/DocsPage";
+import HeroSection from "./components/HeroSection";
+import InstallWizard from "./components/InstallWizard";
 import OpenSourceFooter from "./components/OpenSourceFooter";
 import SiteHeader from "./components/SiteHeader";
+import StartupIntro from "./components/StartupIntro";
+import { useDampedScroll } from "./hooks/useDampedScroll";
+import theme from "./theme";
 
-const theme = createTheme({
-  palette: {
-    mode: "light",
-    background: {
-      default: "#fbfbf8",
-      paper: "rgba(255, 255, 255, 0.72)",
-    },
-    text: {
-      primary: "#171717",
-      secondary: "#606a70",
-    },
-  },
-  typography: {
-    fontFamily:
-      '"DM Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-    h1: {
-      fontWeight: 500,
-      letterSpacing: 0,
-      lineHeight: 1.02,
-    },
-    button: {
-      fontWeight: 700,
-      letterSpacing: 0,
-      textTransform: "none",
-    },
-  },
-  shape: {
-    borderRadius: 8,
-  },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          minHeight: "3.2rem",
-          borderRadius: 999,
-          paddingInline: "1.25rem",
-        },
-      },
-    },
-  },
-});
+const STARTUP_INTRO_STORAGE_KEY = "poly-ui-startup-intro-complete";
 
-const MotionContainer = motion.create(Container);
+function useInternalNavigation() {
+  const [pathname, setPathname] = useState(window.location.pathname);
 
-function App() {
-  const shouldReduceMotion = useReducedMotion();
+  useEffect(() => {
+    const handlePopState = () => setPathname(window.location.pathname);
+    const handleClick = (event: MouseEvent) => {
+      if (
+        event.defaultPrevented ||
+        event.button !== 0 ||
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey
+      ) {
+        return;
+      }
+
+      const link = (event.target as Element | null)?.closest<HTMLAnchorElement>("a[href]");
+      if (
+        !link ||
+        link.target === "_blank" ||
+        link.hasAttribute("download") ||
+        link.origin !== window.location.origin
+      ) {
+        return;
+      }
+
+      const isSameDocument =
+        link.pathname === window.location.pathname &&
+        link.search === window.location.search;
+
+      if (isSameDocument) return;
+
+      event.preventDefault();
+      window.history.pushState({}, "", link.href);
+      setPathname(window.location.pathname);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    document.addEventListener("click", handleClick);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+      document.removeEventListener("click", handleClick);
+    };
+  }, []);
+
+  return pathname;
+}
+
+function HomePage() {
   const [isWizardOpen, setWizardOpen] = useState(false);
-  const handleDownloadClick = () => setWizardOpen(true);
-  const handleGetStartedClick = () => setWizardOpen(true);
-  const handleWizardClose = () => setWizardOpen(false);
-  const heroCopyVariants: Variants = {
-    hidden: {},
-    visible: {
-      transition: shouldReduceMotion ? {} : { staggerChildren: 0.12 },
-    },
-  };
-  const heroTextVariants: Variants = {
-    hidden: shouldReduceMotion
-      ? { opacity: 1, y: 0, filter: "blur(0px)" }
-      : { opacity: 0, y: 12, filter: "blur(12px)" },
-    visible: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: shouldReduceMotion
-        ? { duration: 0 }
-        : { duration: 0.75, ease: [0.22, 1, 0.36, 1] },
-    },
-  };
+  const [isIntroComplete, setIntroComplete] = useState(() => {
+    if (import.meta.env.DEV) return false;
 
-  if (window.location.pathname === "/docs" || window.location.pathname === "/docs/") {
-    return (
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <DocsPage />
-        <OpenSourceFooter />
-      </ThemeProvider>
-    );
-  }
+    try {
+      return window.localStorage.getItem(STARTUP_INTRO_STORAGE_KEY) === "true";
+    } catch {
+      return false;
+    }
+  });
+  const shouldReduceMotion = useReducedMotion();
+  const handleGetStarted = () => setWizardOpen(true);
+  const handleDownload = () => setWizardOpen(true);
+  const handleWizardClose = () => setWizardOpen(false);
+  const handleIntroComplete = () => {
+    if (!import.meta.env.DEV) {
+      try {
+        window.localStorage.setItem(STARTUP_INTRO_STORAGE_KEY, "true");
+      } catch {
+        // The intro can still complete when storage is unavailable.
+      }
+    }
+
+    setIntroComplete(true);
+  };
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
+    <>
+      <AnimatePresence>
+        {!isIntroComplete && (
+          <StartupIntro onComplete={handleIntroComplete} />
+        )}
+      </AnimatePresence>
       <Box
         component="main"
         sx={{
@@ -108,154 +104,71 @@ function App() {
           bgcolor: "background.default",
         }}
       >
-        <SiteHeader onGetStarted={handleGetStartedClick} />
-
-        <Box
-          id="hero"
-          component="section"
-          aria-labelledby="hero-title"
-          sx={{
-            position: "relative",
-            minHeight: "100svh",
-            isolation: "isolate",
-            px: { xs: 2, md: 5, lg: 10 },
-            py: { xs: 3, md: 6 },
-          }}
-        >
-          <Box
-            component="img"
-            src="/assets/poly-hero-nature.png"
-            alt=""
-            sx={{
-              position: "absolute",
-              inset: 0,
-              zIndex: -4,
-              width: "100%",
-              height: "100%",
-              objectFit: "cover",
-              objectPosition: { xs: "62% center", md: "center" },
-              transform: "scale(1.02)",
-            }}
-          />
-          <Box
-            sx={{
-              position: "absolute",
-              inset: 0,
-              zIndex: -3,
-              background: {
-                xs: "linear-gradient(90deg, rgba(251,251,248,.98) 0%, rgba(251,251,248,.82) 55%, rgba(251,251,248,.35) 100%), linear-gradient(0deg, rgba(251,251,248,1) 0%, rgba(251,251,248,.2) 45%, rgba(251,251,248,.5) 100%)",
-                md: "linear-gradient(90deg, rgba(251,251,248,.96) 0%, rgba(251,251,248,.75) 34%, rgba(251,251,248,.2) 68%), linear-gradient(0deg, rgba(251,251,248,1) 0%, rgba(251,251,248,.18) 34%, rgba(251,251,248,.5) 100%)",
-              },
-            }}
-          />
-
-          <MotionContainer
-            maxWidth={false}
-            disableGutters
-            initial="hidden"
-            animate="visible"
-            variants={heroCopyVariants}
-            sx={{
-              position: "absolute",
-              left: { xs: 16, md: "clamp(1.25rem, 4vw, 5rem)" },
-              bottom: { xs: 24, md: "clamp(2rem, 7vh, 5rem)" },
-              zIndex: 2,
-              width: {
-                xs: "calc(100% - 2rem)",
-                md: "min(37rem, calc(100% - 2.5rem))",
-              },
-            }}
-          >
-            <motion.div variants={heroTextVariants}>
-              <Typography
-                component="p"
-                sx={{
-                  mb: 1.2,
-                  color: "#687077",
-                  fontSize: ".95rem",
-                  fontWeight: 700,
-                }}
-              >
-                Poly UI
-              </Typography>
-            </motion.div>
-            <motion.div variants={heroTextVariants}>
-              <Typography
-                id="hero-title"
-                variant="h1"
-                sx={{
-                  maxWidth: "12ch",
-                  fontSize: {
-                    xs: "clamp(2.45rem, 11vw, 3.4rem)",
-                    md: "clamp(2.65rem, 5.1vw, 5.05rem)",
-                  },
-                }}
-              >
-                One calm window for your models.
-              </Typography>
-            </motion.div>
-            <motion.div variants={heroTextVariants}>
-              <Typography
-                sx={{
-                  maxWidth: "31rem",
-                  mt: 1.5,
-                  color: "text.secondary",
-                  fontSize: {
-                    xs: "1rem",
-                    md: "clamp(.98rem, 1.1vw, 1.08rem)",
-                  },
-                  lineHeight: 1.6,
-                }}
-              >
-                Use Ollama from a simple interface built for private, everyday
-                conversations with local models.
-              </Typography>
-            </motion.div>
-            <motion.div variants={heroTextVariants}>
-              <Stack direction="row" flexWrap="wrap" gap={1.5} sx={{ mt: 3 }}>
-              <Button
-                variant="contained"
-                color="inherit"
-                endIcon={<ArrowOutwardIcon fontSize="small" />}
-                onClick={handleDownloadClick}
-                sx={{
-                  bgcolor: "#171717",
-                  color: "#fff",
-                  boxShadow: "0 1rem 2.6rem rgba(12, 19, 28, 0.16)",
-                  "&:hover": { bgcolor: "#171717" },
-                }}
-              >
-                Download PolyUI
-              </Button>
-              <Button
-                href="https://github.com/monolabsdev/poly-ui"
-                target="_blank"
-                rel="noopener noreferrer"
-                variant="outlined"
-                startIcon={<GitHubIcon />}
-                sx={{
-                  color: "#242424",
-                  borderColor: "rgba(23, 23, 23, 0.12)",
-                  bgcolor: "rgba(255, 255, 255, 0.72)",
-                  boxShadow: "0 1rem 2.6rem rgba(32, 46, 62, 0.08)",
-                  backdropFilter: "blur(18px)",
-                  "&:hover": {
-                    borderColor: "rgba(23, 23, 23, 0.2)",
-                    bgcolor: "rgba(255, 255, 255, 0.84)",
-                  },
-                }}
-              >
-                GitHub
-              </Button>
-            </Stack>
-            </motion.div>
-          </MotionContainer>
-        </Box>
+        <SiteHeader onGetStarted={handleGetStarted} />
+        <HeroSection
+          onDownload={handleDownload}
+          shouldAnimate={isIntroComplete || Boolean(shouldReduceMotion)}
+        />
       </Box>
       <InstallWizard open={isWizardOpen} onClose={handleWizardClose} />
       <OpenSourceFooter />
-    </ThemeProvider>
+    </>
   );
 }
 
-export default App;
+export default function App() {
+  const pathname = useInternalNavigation();
+  const shouldReduceMotion = useReducedMotion();
+  const isDocs = pathname === "/docs" || pathname === "/docs/";
+  useDampedScroll();
+
+  useEffect(() => {
+    if (shouldReduceMotion) return;
+
+    const root = document.documentElement;
+    root.classList.add("page-transition-active");
+    const timeout = window.setTimeout(() => {
+      root.classList.remove("page-transition-active");
+    }, 360);
+
+    return () => {
+      window.clearTimeout(timeout);
+      root.classList.remove("page-transition-active");
+    };
+  }, [pathname, shouldReduceMotion]);
+
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box key={pathname} sx={{ minHeight: "100svh" }}>
+        {isDocs ? (
+          <>
+            <DocsPage />
+            <OpenSourceFooter />
+          </>
+        ) : (
+          <HomePage />
+        )}
+      </Box>
+      <AnimatePresence>
+        <motion.div
+          key={`blur-${pathname}`}
+          aria-hidden="true"
+          initial={shouldReduceMotion ? false : { opacity: 1, backdropFilter: "blur(6px)" }}
+          animate={{ opacity: 0, backdropFilter: "blur(0px)" }}
+          transition={{
+            duration: shouldReduceMotion ? 0 : 0.36,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 1000,
+            pointerEvents: "none",
+            willChange: "opacity, backdrop-filter",
+          }}
+        />
+      </AnimatePresence>
+    </ThemeProvider>
+  );
+}

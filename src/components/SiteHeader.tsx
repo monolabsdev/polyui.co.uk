@@ -13,7 +13,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import ReleaseChip from "../ReleaseChip";
+import ReleaseChip from "./ReleaseChip";
 import { useMobileMenu } from "../hooks/useMobileMenu";
 
 interface SiteHeaderProps {

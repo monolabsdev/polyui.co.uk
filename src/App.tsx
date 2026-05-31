@@ -68,7 +68,7 @@ function HomePage() {
     if (import.meta.env.DEV) return false;
 
     try {
-      return window.localStorage.getItem(STARTUP_INTRO_STORAGE_KEY) === "true";
+      return window.sessionStorage.getItem(STARTUP_INTRO_STORAGE_KEY) === "true";
     } catch {
       return false;
     }
@@ -80,7 +80,7 @@ function HomePage() {
   const handleIntroComplete = () => {
     if (!import.meta.env.DEV) {
       try {
-        window.localStorage.setItem(STARTUP_INTRO_STORAGE_KEY, "true");
+        window.sessionStorage.setItem(STARTUP_INTRO_STORAGE_KEY, "true");
       } catch {
         // The intro can still complete when storage is unavailable.
       }

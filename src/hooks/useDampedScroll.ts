@@ -82,6 +82,32 @@ export function useDampedScroll() {
       }
     };
 
+    const handleClick = (event: MouseEvent) => {
+      const link = (event.target as Element | null)?.closest<HTMLAnchorElement>(
+        'a[href^="#"]',
+      );
+      const target = link?.hash
+        ? document.querySelector<HTMLElement>(link.hash)
+        : null;
+
+      if (
+        !link ||
+        !target ||
+        prefersReducedMotion.matches ||
+        !usesPrecisePointer.matches
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      window.history.pushState({}, "", link.href);
+      targetY = clamp(target.offsetTop, 0, getMaxScroll());
+
+      if (frame === undefined) {
+        frame = window.requestAnimationFrame(animate);
+      }
+    };
+
     const syncTarget = () => {
       if (frame === undefined) targetY = window.scrollY;
     };
@@ -89,12 +115,14 @@ export function useDampedScroll() {
     window.addEventListener("wheel", handleWheel, { passive: false });
     window.addEventListener("resize", syncTarget);
     window.addEventListener("scroll", syncTarget, { passive: true });
+    document.addEventListener("click", handleClick);
 
     return () => {
       stopAnimation();
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("resize", syncTarget);
       window.removeEventListener("scroll", syncTarget);
+      document.removeEventListener("click", handleClick);
     };
   }, []);
 }

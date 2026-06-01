@@ -40,7 +40,7 @@ function Brand({ showDocsLabel = false }: { showDocsLabel?: boolean }) {
       >
         <Box
           component="img"
-          src="/assets/openbench-logo.svg"
+          src="/assets/polyui-logo.png"
           alt=""
           sx={{ width: 32, height: 32, borderRadius: 1.2 }}
         />

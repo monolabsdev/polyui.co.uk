@@ -1,5 +1,7 @@
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import DarkModeRounded from "@mui/icons-material/DarkModeRounded";
+import LightModeRounded from "@mui/icons-material/LightModeRounded";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import {
   AppBar,
@@ -12,6 +14,7 @@ import {
   Stack,
   Toolbar,
   Typography,
+  useColorScheme,
 } from "@mui/material";
 import ReleaseChip from "./ReleaseChip";
 import { useMobileMenu } from "../hooks/useMobileMenu";
@@ -92,6 +95,39 @@ function PrimaryButton({ onClick }: { onClick?: () => void }) {
   );
 }
 
+function ColorModeToggle() {
+  const { mode, setMode, systemMode } = useColorScheme();
+
+  const handleToggle = () => {
+    if (mode !== "system") {
+      setMode(mode === "light" ? "dark" : "light");
+    } else {
+      setMode(systemMode === "light" ? "dark" : "light");
+    }
+  };
+
+  const isDark = mode === "dark" || (mode === "system" && systemMode === "dark");
+
+  return (
+    <IconButton
+      onClick={handleToggle}
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      sx={(theme) => ({
+        border: "1px solid",
+        borderColor: "rgba(23, 23, 23, 0.08)",
+        bgcolor: "rgba(255, 255, 255, 0.54)",
+        backdropFilter: "blur(18px)",
+        ...theme.applyStyles("dark", {
+          borderColor: "rgba(255, 255, 255, 0.08)",
+          bgcolor: "rgba(255, 255, 255, 0.06)",
+        }),
+      })}
+    >
+      {isDark ? <LightModeRounded /> : <DarkModeRounded />}
+    </IconButton>
+  );
+}
+
 export default function SiteHeader({ page = "home", onGetStarted }: SiteHeaderProps) {
   const { isOpen, openMenu, closeMenu } = useMobileMenu();
   const isDocs = page === "docs";
@@ -102,14 +138,18 @@ export default function SiteHeader({ page = "home", onGetStarted }: SiteHeaderPr
         elevation={0}
         position={isDocs ? "sticky" : "fixed"}
         color="transparent"
-        sx={{
+        sx={(theme) => ({
           inset: "0 0 auto",
           px: { xs: 1.25, md: 3 },
           py: isDocs ? 0 : 1,
           borderBottom: isDocs ? "1px solid rgba(23, 23, 23, 0.08)" : "none",
           bgcolor: isDocs ? "rgba(251, 251, 248, 0.82)" : "transparent",
           backdropFilter: isDocs ? "blur(18px)" : "none",
-        }}
+          ...(isDocs && theme.applyStyles("dark", {
+            borderBottomColor: "rgba(255, 255, 255, 0.08)",
+            bgcolor: "rgba(18, 18, 18, 0.82)",
+          })),
+        })}
       >
         <Toolbar disableGutters sx={{ minHeight: "56px !important" }}>
           <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -143,18 +183,25 @@ export default function SiteHeader({ page = "home", onGetStarted }: SiteHeaderPr
                 <PrimaryButton onClick={onGetStarted} />
               </>
             )}
+            <ColorModeToggle />
           </Stack>
-          <Box sx={{ display: { xs: "flex", md: "none" }, justifyContent: "flex-end", flex: 1 }}>
+          <Box sx={{ display: { xs: "flex", md: "none" }, justifyContent: "flex-end", flex: 1, gap: 1 }}>
+            <ColorModeToggle />
             <IconButton
               aria-label="Open navigation menu"
               aria-expanded={isOpen}
               aria-controls="mobile-navigation"
               onClick={openMenu}
-              sx={{
-                border: "1px solid rgba(23, 23, 23, 0.08)",
+              sx={(theme) => ({
+                border: "1px solid",
+                borderColor: "rgba(23, 23, 23, 0.08)",
                 bgcolor: "rgba(255, 255, 255, 0.54)",
                 backdropFilter: "blur(18px)",
-              }}
+                ...theme.applyStyles("dark", {
+                  borderColor: "rgba(255, 255, 255, 0.08)",
+                  bgcolor: "rgba(255, 255, 255, 0.06)",
+                }),
+              })}
             >
               <MenuRoundedIcon />
             </IconButton>
@@ -170,7 +217,7 @@ export default function SiteHeader({ page = "home", onGetStarted }: SiteHeaderPr
         ModalProps={{ keepMounted: true }}
         slotProps={{
           paper: {
-            sx: {
+            sx: (theme) => ({
               width: "min(86vw, 22rem)",
               borderLeft: "1px solid rgba(255, 255, 255, 0.72)",
               bgcolor: "rgba(250, 250, 247, 0.74)",
@@ -178,7 +225,14 @@ export default function SiteHeader({ page = "home", onGetStarted }: SiteHeaderPr
                 "linear-gradient(145deg, rgba(255,255,255,.62), rgba(255,255,255,.16))",
               boxShadow: "-1rem 0 3rem rgba(37, 49, 56, 0.12)",
               backdropFilter: "blur(28px) saturate(145%)",
-            },
+              ...theme.applyStyles("dark", {
+                borderLeftColor: "rgba(0, 0, 0, 0.72)",
+                bgcolor: "rgba(26, 26, 26, 0.85)",
+                backgroundImage:
+                  "linear-gradient(145deg, rgba(30,30,30,.82), rgba(18,18,18,.66))",
+                boxShadow: "-1rem 0 3rem rgba(0, 0, 0, 0.32)",
+              }),
+            }),
           },
         }}
       >

@@ -80,7 +80,10 @@ export default function DownloadDialog({ open, onClose }: DownloadDialogProps) {
     >
       {loading ? (
         <DialogContent sx={{ display: "grid", placeItems: "center", py: 6 }}>
-          <CircularProgress size={28} sx={{ color: "#171717" }} />
+          <CircularProgress size={28} sx={(theme) => ({
+            color: "#171717",
+            ...theme.applyStyles("dark", { color: "#e8e8e8" }),
+          })} />
         </DialogContent>
       ) : fetchError ? (
         <>
@@ -95,7 +98,14 @@ export default function DownloadDialog({ open, onClose }: DownloadDialogProps) {
               variant="outlined"
               fullWidth
               onClick={onClose}
-              sx={{ color: "#242424", borderColor: "rgba(23, 23, 23, 0.12)" }}
+              sx={(theme) => ({
+                color: "#242424",
+                borderColor: "rgba(23, 23, 23, 0.12)",
+                ...theme.applyStyles("dark", {
+                  color: "#d0d0d0",
+                  borderColor: "rgba(255, 255, 255, 0.12)",
+                }),
+              })}
             >
               Close
             </Button>
@@ -118,11 +128,16 @@ export default function DownloadDialog({ open, onClose }: DownloadDialogProps) {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={onClose}
-                sx={{
+                sx={(theme) => ({
                   bgcolor: "#171717",
                   color: "#fff",
                   "&:hover": { bgcolor: "#171717" },
-                }}
+                  ...theme.applyStyles("dark", {
+                    bgcolor: "#e8e8e8",
+                    color: "#171717",
+                    "&:hover": { bgcolor: "#d0d0d0" },
+                  }),
+                })}
               >
                 Download
               </Button>
@@ -130,7 +145,14 @@ export default function DownloadDialog({ open, onClose }: DownloadDialogProps) {
                 variant="outlined"
                 fullWidth
                 onClick={onClose}
-                sx={{ color: "#242424", borderColor: "rgba(23, 23, 23, 0.12)" }}
+                sx={(theme) => ({
+                  color: "#242424",
+                  borderColor: "rgba(23, 23, 23, 0.12)",
+                  ...theme.applyStyles("dark", {
+                    color: "#d0d0d0",
+                    borderColor: "rgba(255, 255, 255, 0.12)",
+                  }),
+                })}
               >
                 Cancel
               </Button>
@@ -152,7 +174,14 @@ export default function DownloadDialog({ open, onClose }: DownloadDialogProps) {
               variant="outlined"
               fullWidth
               onClick={onClose}
-              sx={{ color: "#242424", borderColor: "rgba(23, 23, 23, 0.12)" }}
+              sx={(theme) => ({
+                color: "#242424",
+                borderColor: "rgba(23, 23, 23, 0.12)",
+                ...theme.applyStyles("dark", {
+                  color: "#d0d0d0",
+                  borderColor: "rgba(255, 255, 255, 0.12)",
+                }),
+              })}
             >
               Close
             </Button>

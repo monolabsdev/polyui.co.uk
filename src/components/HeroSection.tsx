@@ -55,7 +55,7 @@ export default function HeroSection({ onDownload, shouldAnimate = true }: HeroSe
         component="img"
         src="/assets/poly-hero-nature.png"
         alt=""
-        sx={{
+        sx={(theme) => ({
           position: "absolute",
           inset: 0,
           zIndex: -4,
@@ -64,18 +64,54 @@ export default function HeroSection({ onDownload, shouldAnimate = true }: HeroSe
           objectFit: "cover",
           objectPosition: { xs: "62% center", md: "center" },
           transform: "scale(1.02)",
-        }}
+          opacity: 1,
+          transition: "opacity 0.4s ease",
+          ...theme.applyStyles("dark", { opacity: 0 }),
+        })}
+      />
+      <Box
+        component="img"
+        src="/assets/polyui-hero-dark.png"
+        alt=""
+        sx={(theme) => ({
+          position: "absolute",
+          inset: 0,
+          zIndex: -4,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          objectPosition: { xs: "62% center", md: "center" },
+          transform: "scale(1.02)",
+          opacity: 0,
+          transition: "opacity 0.4s ease",
+          ...theme.applyStyles("dark", { opacity: 1 }),
+        })}
       />
       <Box
         sx={{
           position: "absolute",
           inset: 0,
           zIndex: -3,
+          transition: "opacity 0.4s ease",
           background: {
             xs: "linear-gradient(90deg, rgba(251,251,248,.98) 0%, rgba(251,251,248,.82) 55%, rgba(251,251,248,.35) 100%), linear-gradient(0deg, rgba(251,251,248,1) 0%, rgba(251,251,248,.2) 45%, rgba(251,251,248,.5) 100%)",
             md: "linear-gradient(90deg, rgba(251,251,248,.96) 0%, rgba(251,251,248,.75) 34%, rgba(251,251,248,.2) 68%), linear-gradient(0deg, rgba(251,251,248,1) 0%, rgba(251,251,248,.18) 34%, rgba(251,251,248,.5) 100%)",
           },
         }}
+      />
+      <Box
+        sx={(theme) => ({
+          position: "absolute",
+          inset: 0,
+          zIndex: -3,
+          transition: "opacity 0.4s ease",
+          opacity: 0,
+          background: {
+            xs: "linear-gradient(90deg, rgba(18,18,18,.96) 0%, rgba(18,18,18,.82) 55%, rgba(18,18,18,.5) 100%), linear-gradient(0deg, rgba(18,18,18,.98) 0%, rgba(18,18,18,.35) 45%, rgba(18,18,18,.55) 100%)",
+            md: "linear-gradient(90deg, rgba(18,18,18,.94) 0%, rgba(18,18,18,.75) 34%, rgba(18,18,18,.3) 68%), linear-gradient(0deg, rgba(18,18,18,.98) 0%, rgba(18,18,18,.28) 34%, rgba(18,18,18,.55) 100%)",
+          },
+          ...theme.applyStyles("dark", { opacity: 1 }),
+        })}
       />
 
       <MotionContainer
@@ -98,12 +134,13 @@ export default function HeroSection({ onDownload, shouldAnimate = true }: HeroSe
         <motion.div variants={heroTextVariants}>
           <Typography
             component="p"
-            sx={{
+            sx={(theme) => ({
               mb: 1.2,
               color: "#687077",
               fontSize: ".95rem",
               fontWeight: 700,
-            }}
+              ...theme.applyStyles("dark", { color: "#9ca3af" }),
+            })}
           >
             Poly UI
           </Typography>
@@ -147,12 +184,18 @@ export default function HeroSection({ onDownload, shouldAnimate = true }: HeroSe
               color="inherit"
               endIcon={<ArrowOutwardIcon fontSize="small" />}
               onClick={onDownload}
-              sx={{
+              sx={(theme) => ({
                 bgcolor: "#171717",
                 color: "#fff",
                 boxShadow: "0 1rem 2.6rem rgba(12, 19, 28, 0.16)",
                 "&:hover": { bgcolor: "#171717" },
-              }}
+                ...theme.applyStyles("dark", {
+                  bgcolor: "#e8e8e8",
+                  color: "#171717",
+                  boxShadow: "0 1rem 2.6rem rgba(0, 0, 0, 0.4)",
+                  "&:hover": { bgcolor: "#d0d0d0" },
+                }),
+              })}
             >
               Download PolyUI
             </Button>
@@ -162,7 +205,7 @@ export default function HeroSection({ onDownload, shouldAnimate = true }: HeroSe
               rel="noopener noreferrer"
               variant="outlined"
               startIcon={<GitHubIcon />}
-              sx={{
+              sx={(theme) => ({
                 color: "#242424",
                 borderColor: "rgba(23, 23, 23, 0.12)",
                 bgcolor: "rgba(255, 255, 255, 0.72)",
@@ -172,7 +215,16 @@ export default function HeroSection({ onDownload, shouldAnimate = true }: HeroSe
                   borderColor: "rgba(23, 23, 23, 0.2)",
                   bgcolor: "rgba(255, 255, 255, 0.84)",
                 },
-              }}
+                ...theme.applyStyles("dark", {
+                  color: "#d0d0d0",
+                  borderColor: "rgba(255, 255, 255, 0.12)",
+                  bgcolor: "rgba(255, 255, 255, 0.06)",
+                  "&:hover": {
+                    borderColor: "rgba(255, 255, 255, 0.2)",
+                    bgcolor: "rgba(255, 255, 255, 0.1)",
+                  },
+                }),
+              })}
             >
               GitHub
             </Button>

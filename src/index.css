@@ -9,7 +9,18 @@ body {
   overflow-x: hidden;
 }
 
-html.page-transition-active,
-html.page-transition-active body {
-  overflow: hidden;
+html.mode-transitioning,
+html.mode-transitioning *,
+html.mode-transitioning *::before,
+html.mode-transitioning *::after {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.2s ease !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.mode-transitioning,
+  html.mode-transitioning *,
+  html.mode-transitioning *::before,
+  html.mode-transitioning *::after {
+    transition: none !important;
+  }
 }

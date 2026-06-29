@@ -1,6 +1,6 @@
-import { Box, CssBaseline, ThemeProvider } from "@mui/material";
+import { Box, CssBaseline, ThemeProvider, useColorScheme } from "@mui/material";
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, useReducedMotion } from "motion/react";
 import DocsPage from "./components/DocsPage";
 import HeroSection from "./components/HeroSection";
 import InstallWizard from "./components/InstallWizard";
@@ -116,49 +116,40 @@ function HomePage() {
   );
 }
 
-export default function App() {
-  const pathname = useInternalNavigation();
+function ModeTransitionWatcher() {
+  const { systemMode } = useColorScheme();
   const shouldReduceMotion = useReducedMotion();
-  const isDocs = pathname === "/docs" || pathname === "/docs/";
-  useDampedScroll();
 
   useEffect(() => {
     if (shouldReduceMotion) return;
-
     const root = document.documentElement;
-    root.classList.add("page-transition-active");
+    root.classList.add("mode-transitioning");
     const timeout = window.setTimeout(() => {
-      root.classList.remove("page-transition-active");
-    }, 360);
+      root.classList.remove("mode-transitioning");
+    }, 400);
+    return () => window.clearTimeout(timeout);
+  }, [systemMode, shouldReduceMotion]);
 
-    return () => {
-      window.clearTimeout(timeout);
-      root.classList.remove("page-transition-active");
-    };
-  }, [pathname, shouldReduceMotion]);
+  return null;
+}
+
+export default function App() {
+  const pathname = useInternalNavigation();
+  const isDocs = pathname === "/docs" || pathname === "/docs/";
+  useDampedScroll();
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={pathname}
-          initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -12 }}
-          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-          style={{ minHeight: "100svh" }}
-        >
-          {isDocs ? (
-            <>
-              <DocsPage />
-              <OpenSourceFooter />
-            </>
-          ) : (
-            <HomePage />
-          )}
-        </motion.div>
-      </AnimatePresence>
+      <ModeTransitionWatcher />
+      {isDocs ? (
+        <>
+          <DocsPage />
+          <OpenSourceFooter />
+        </>
+      ) : (
+        <HomePage />
+      )}
     </ThemeProvider>
   );
 }

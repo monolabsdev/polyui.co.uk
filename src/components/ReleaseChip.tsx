@@ -35,7 +35,7 @@ export default function ReleaseChip() {
       target="_blank"
       rel="noopener noreferrer"
       underline="none"
-      sx={{
+      sx={(theme) => ({
         display: "inline-flex",
         alignItems: "center",
         maxWidth: "100%",
@@ -56,11 +56,20 @@ export default function ReleaseChip() {
           bgcolor: "rgba(255, 255, 255, 0.88)",
           borderColor: "rgba(125, 72, 255, 0.28)",
         },
-      }}
+        ...theme.applyStyles("dark", {
+          bgcolor: "rgba(255, 255, 255, 0.05)",
+          borderColor: "rgba(255, 255, 255, 0.08)",
+          boxShadow: "0 2px 12px rgba(0,0,0,0.25)",
+          "&:hover": {
+            bgcolor: "rgba(255, 255, 255, 0.08)",
+            borderColor: "rgba(125, 72, 255, 0.4)",
+          },
+        }),
+      })}
     >
       <Typography
         component="span"
-        sx={{
+        sx={(theme) => ({
           px: 1.4,
           py: 0.42,
           borderRadius: 999,
@@ -70,7 +79,10 @@ export default function ReleaseChip() {
           color: "#7d48ff",
           fontSize: "inherit",
           boxShadow: "inset 0 1px 0 rgba(255,255,255,0.78)",
-        }}
+          ...theme.applyStyles("dark", {
+            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
+          }),
+        })}
       >
         {release.tagName}
       </Typography>

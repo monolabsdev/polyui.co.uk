@@ -22,7 +22,7 @@ function CodeBlock({ children }: { children: string }) {
   return (
     <Box
       component="pre"
-      sx={{
+      sx={(theme) => ({
         m: 0,
         mt: 1.5,
         overflowX: "auto",
@@ -36,7 +36,12 @@ function CodeBlock({ children }: { children: string }) {
           '"SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace',
         fontSize: ".82rem",
         lineHeight: 1.7,
-      }}
+        ...theme.applyStyles("dark", {
+          borderColor: "rgba(255, 255, 255, 0.08)",
+          bgcolor: "#1e1e1e",
+          color: "#d4d4d4",
+        }),
+      })}
     >
       <code>{children}</code>
     </Box>
@@ -103,7 +108,14 @@ export default function DocsPage() {
             }}
           >
             <Typography
-              sx={{ mb: 1.5, color: "#899095", fontSize: ".72rem", fontWeight: 700, letterSpacing: ".1em" }}
+              sx={(theme) => ({
+                mb: 1.5,
+                color: "#899095",
+                fontSize: ".72rem",
+                fontWeight: 700,
+                letterSpacing: ".1em",
+                ...theme.applyStyles("dark", { color: "#6b7280" }),
+              })}
             >
               ON THIS PAGE
             </Typography>
@@ -127,7 +139,15 @@ export default function DocsPage() {
           </Box>
 
           <Box component="article">
-            <Typography sx={{ mb: 1, color: "#687077", fontSize: ".82rem", fontWeight: 700 }}>
+            <Typography
+              sx={(theme) => ({
+                mb: 1,
+                color: "#687077",
+                fontSize: ".82rem",
+                fontWeight: 700,
+                ...theme.applyStyles("dark", { color: "#9ca3af" }),
+              })}
+            >
               POLY UI DOCUMENTATION
             </Typography>
             <Typography
@@ -149,7 +169,7 @@ export default function DocsPage() {
 
             <Box
               role="note"
-              sx={{
+              sx={(theme) => ({
                 display: "flex",
                 gap: 1.5,
                 mb: 6,
@@ -158,14 +178,38 @@ export default function DocsPage() {
                 bgcolor: "rgba(225, 248, 255, 0.72)",
                 px: 2,
                 py: 1.75,
-              }}
+                ...theme.applyStyles("dark", {
+                  borderColor: "rgba(96, 165, 250, 0.2)",
+                  bgcolor: "rgba(30, 58, 95, 0.5)",
+                }),
+              })}
             >
-              <WarningAmberRoundedIcon sx={{ mt: 0.15, color: "#1d7a9a", fontSize: 20 }} />
+              <WarningAmberRoundedIcon sx={(theme) => ({
+                mt: 0.15,
+                color: "#1d7a9a",
+                fontSize: 20,
+                ...theme.applyStyles("dark", { color: "#60a5fa" }),
+              })} />
               <Box>
-                <Typography sx={{ color: "#184c71", fontSize: ".9rem", fontWeight: 700 }}>
+                <Typography
+                  sx={(theme) => ({
+                    color: "#184c71",
+                    fontSize: ".9rem",
+                    fontWeight: 700,
+                    ...theme.applyStyles("dark", { color: "#93c5fd" }),
+                  })}
+                >
                   Multi-provider support is now available
                 </Typography>
-                <Typography sx={{ mt: 0.35, color: "#2d5b79", fontSize: ".88rem", lineHeight: 1.65 }}>
+                <Typography
+                  sx={(theme) => ({
+                    mt: 0.35,
+                    color: "#2d5b79",
+                    fontSize: ".88rem",
+                    lineHeight: 1.65,
+                    ...theme.applyStyles("dark", { color: "#b9d4f0" }),
+                  })}
+                >
                   Poly UI now supports multiple backends alongside Ollama.
                   Switch between providers from the settings panel.
                 </Typography>
@@ -218,13 +262,16 @@ export default function DocsPage() {
                 rel="noopener noreferrer"
                 variant="outlined"
                 endIcon={<ArrowOutwardIcon />}
-                sx={{
+                sx={(theme) => ({
                   mt: 2,
                   minHeight: 0,
                   borderColor: "rgba(23, 23, 23, 0.14)",
                   color: "text.primary",
                   py: 0.9,
-                }}
+                  ...theme.applyStyles("dark", {
+                    borderColor: "rgba(255, 255, 255, 0.14)",
+                  }),
+                })}
               >
                 Download Ollama
               </Button>

@@ -1,15 +1,33 @@
 import { createTheme } from "@mui/material";
 
 const theme = createTheme({
-  palette: {
-    mode: "light",
-    background: {
-      default: "#fbfbf8",
-      paper: "#ffffff",
+  cssVariables: {
+    colorSchemeSelector: "class",
+  },
+  colorSchemes: {
+    light: {
+      palette: {
+        background: {
+          default: "#fbfbf8",
+          paper: "#ffffff",
+        },
+        text: {
+          primary: "#171717",
+          secondary: "#606a70",
+        },
+      },
     },
-    text: {
-      primary: "#171717",
-      secondary: "#606a70",
+    dark: {
+      palette: {
+        background: {
+          default: "#121212",
+          paper: "#1a1a1a",
+        },
+        text: {
+          primary: "#e8e8e8",
+          secondary: "#9ca3af",
+        },
+      },
     },
   },
   typography: {

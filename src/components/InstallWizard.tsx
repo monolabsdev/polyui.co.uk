@@ -70,7 +70,7 @@ function InstallerOption({ asset, description, label, onSelect }: InstallerOptio
   return (
     <ButtonBase
       onClick={() => onSelect(asset)}
-      sx={{
+      sx={(theme) => ({
         display: "block",
         flex: 1,
         minWidth: 0,
@@ -83,7 +83,14 @@ function InstallerOption({ asset, description, label, onSelect }: InstallerOptio
           borderColor: "rgba(23, 23, 23, 0.3)",
           bgcolor: "rgba(23, 23, 23, 0.025)",
         },
-      }}
+        ...theme.applyStyles("dark", {
+          borderColor: "rgba(255, 255, 255, 0.1)",
+          "&:hover, &:focus-visible": {
+            borderColor: "rgba(255, 255, 255, 0.3)",
+            bgcolor: "rgba(255, 255, 255, 0.04)",
+          },
+        }),
+      })}
     >
       <Typography sx={{ mb: 0.25, fontWeight: 600 }}>{label}</Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
@@ -91,7 +98,7 @@ function InstallerOption({ asset, description, label, onSelect }: InstallerOptio
       </Typography>
       <Box
         component="span"
-        sx={{
+        sx={(theme) => ({
           display: "block",
           borderRadius: 999,
           bgcolor: "#171717",
@@ -101,7 +108,11 @@ function InstallerOption({ asset, description, label, onSelect }: InstallerOptio
           textAlign: "center",
           fontSize: ".82rem",
           fontWeight: 700,
-        }}
+          ...theme.applyStyles("dark", {
+            bgcolor: "#e8e8e8",
+            color: "#171717",
+          }),
+        })}
       >
         Download
       </Box>
@@ -169,10 +180,13 @@ export default function InstallWizard({ open, onClose }: InstallWizardProps) {
       fullWidth
       slotProps={{
         backdrop: {
-          sx: {
+          sx: (theme) => ({
             backgroundColor: "rgba(251, 251, 248, 0.5)",
             backdropFilter: "blur(4px)",
-          },
+            ...theme.applyStyles("dark", {
+              backgroundColor: "rgba(0, 0, 0, 0.65)",
+            }),
+          }),
         },
         paper: {
           sx: {
@@ -186,7 +200,10 @@ export default function InstallWizard({ open, onClose }: InstallWizardProps) {
     >
       {loading ? (
         <DialogContent sx={{ display: "grid", placeItems: "center", py: 6 }}>
-          <CircularProgress size={28} sx={{ color: "#171717" }} />
+          <CircularProgress size={28} sx={(theme) => ({
+            color: "#171717",
+            ...theme.applyStyles("dark", { color: "#e8e8e8" }),
+          })} />
         </DialogContent>
       ) : fetchError ? (
         <>
@@ -201,7 +218,14 @@ export default function InstallWizard({ open, onClose }: InstallWizardProps) {
               variant="outlined"
               fullWidth
               onClick={onClose}
-              sx={{ color: "#242424", borderColor: "rgba(23, 23, 23, 0.12)" }}
+              sx={(theme) => ({
+                color: "#242424",
+                borderColor: "rgba(23, 23, 23, 0.12)",
+                ...theme.applyStyles("dark", {
+                  color: "#d0d0d0",
+                  borderColor: "rgba(255, 255, 255, 0.12)",
+                }),
+              })}
             >
               Close
             </Button>
@@ -222,7 +246,14 @@ export default function InstallWizard({ open, onClose }: InstallWizardProps) {
               variant="outlined"
               fullWidth
               onClick={onClose}
-              sx={{ color: "#242424", borderColor: "rgba(23, 23, 23, 0.12)" }}
+              sx={(theme) => ({
+                color: "#242424",
+                borderColor: "rgba(23, 23, 23, 0.12)",
+                ...theme.applyStyles("dark", {
+                  color: "#d0d0d0",
+                  borderColor: "rgba(255, 255, 255, 0.12)",
+                }),
+              })}
             >
               Close
             </Button>
@@ -237,11 +268,14 @@ export default function InstallWizard({ open, onClose }: InstallWizardProps) {
             <Chip
               label={osLabel}
               size="small"
-              sx={{
+              sx={(theme) => ({
                 mb: 2,
                 fontWeight: 600,
                 bgcolor: "rgba(23, 23, 23, 0.06)",
-              }}
+                ...theme.applyStyles("dark", {
+                  bgcolor: "rgba(255, 255, 255, 0.08)",
+                }),
+              })}
             />
             <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
               Choose your setup. We'll download the right installer.
@@ -302,11 +336,16 @@ export default function InstallWizard({ open, onClose }: InstallWizardProps) {
                 variant="contained"
                 fullWidth
                 onClick={handleDownload}
-                sx={{
+                sx={(theme) => ({
                   bgcolor: "#171717",
                   color: "#fff",
                   "&:hover": { bgcolor: "#171717" },
-                }}
+                  ...theme.applyStyles("dark", {
+                    bgcolor: "#e8e8e8",
+                    color: "#171717",
+                    "&:hover": { bgcolor: "#d0d0d0" },
+                  }),
+                })}
               >
                 Download
               </Button>
@@ -314,7 +353,14 @@ export default function InstallWizard({ open, onClose }: InstallWizardProps) {
                 variant="outlined"
                 fullWidth
                 onClick={onClose}
-                sx={{ color: "#242424", borderColor: "rgba(23, 23, 23, 0.12)" }}
+                sx={(theme) => ({
+                  color: "#242424",
+                  borderColor: "rgba(23, 23, 23, 0.12)",
+                  ...theme.applyStyles("dark", {
+                    color: "#d0d0d0",
+                    borderColor: "rgba(255, 255, 255, 0.12)",
+                  }),
+                })}
               >
                 Done
               </Button>

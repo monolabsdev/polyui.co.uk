@@ -27,21 +27,31 @@ export const OS_LABEL: Record<OsType, string> = {
 
 export function matchStandaloneAsset(assets: Asset[], os: OsType): Asset | null {
   if (os === "windows") {
-    return assets.find(
-      (a) => a.name.includes("x64-setup.exe") && !a.name.includes("Ollama")
-    ) ?? null;
+    return assets.find((a) => {
+      const name = a.name.toLowerCase();
+      return name.includes("x64-setup.exe") && !name.includes("ollama");
+    }) ?? assets.find((a) => a.name.toLowerCase().endsWith("windows-x64.msi")) ?? null;
   }
   if (os === "macos") {
     return assets.find((a) => a.name.endsWith(".dmg")) ?? null;
+  }
+  if (os === "linux") {
+    return assets.find((a) => a.name.toLowerCase().includes("linux-x64.appimage"))
+      ?? assets.find((a) => {
+        const name = a.name.toLowerCase();
+        return name.includes("linux") && name.endsWith(".appimage");
+      })
+      ?? null;
   }
   return null;
 }
 
 export function matchOllamaAsset(assets: Asset[], os: OsType): Asset | null {
   if (os === "windows") {
-    return assets.find(
-      (a) => a.name.includes("x64-setup.exe") && a.name.includes("Ollama")
-    ) ?? null;
+    return assets.find((a) => {
+      const name = a.name.toLowerCase();
+      return name.includes("x64") && name.includes("ollama") && name.endsWith(".exe");
+    }) ?? null;
   }
   if (os === "macos") {
     return assets.find((a) => a.name.endsWith(".pkg")) ?? null;

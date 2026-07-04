@@ -1,3 +1,4 @@
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import CircularProgress from "@mui/material/CircularProgress";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
@@ -13,43 +14,17 @@ import { useEffect, useMemo, useState } from "react";
 import {
   fetchRelease,
   detectOs,
-  matchStandaloneAsset,
-  matchOllamaAsset,
   OS_LABEL,
   type Asset,
   type OsType,
 } from "../releases";
 
-const INSTALLER_INFO: Record<
-  OsType,
-  | {
-  standalone: { label: string; desc: string };
-  withOllama: { label: string; desc: string };
-    }
-  | null
-> = {
-  windows: {
-    standalone: {
-      label: "PolyUI",
-      desc: "Just the app. Lightweight, minimal.",
-    },
-    withOllama: {
-      label: "PolyUI + Ollama",
-      desc: "App with Ollama bundled for local models.",
-    },
-  },
-  macos: {
-    standalone: {
-      label: "PolyUI",
-      desc: "Just the app for Apple Silicon.",
-    },
-    withOllama: {
-      label: "PolyUI + Ollama",
-      desc: "App with Ollama bundled for local models.",
-    },
-  },
-  linux: null,
-  unknown: null,
+const RELEASES_URL = "https://github.com/monolabsdev/poly-ui/releases/latest";
+
+const INSTALL_COMMANDS: Partial<Record<OsType, string>> = {
+  linux: "curl -fsSL https://raw.githubusercontent.com/monolabsdev/poly-ui/main/scripts/install.sh | sh",
+  macos: "curl -fsSL https://raw.githubusercontent.com/monolabsdev/poly-ui/main/scripts/install.sh | sh",
+  windows: "irm https://raw.githubusercontent.com/monolabsdev/poly-ui/main/scripts/install.ps1 | iex",
 };
 
 interface InstallWizardProps {
@@ -66,13 +41,53 @@ interface InstallerOptionProps {
   onSelect: (asset: Asset) => void;
 }
 
+interface InstallerOptionData {
+  asset: Asset;
+  description: string;
+  label: string;
+}
+
+function findAsset(assets: Asset[], text: string): Asset | null {
+  const needle = text.toLowerCase();
+  return assets.find((asset) => asset.name.toLowerCase().includes(needle)) ?? null;
+}
+
+function getInstallerOptions(assets: Asset[], os: OsType): InstallerOptionData[] {
+  const options: InstallerOptionData[] = [];
+  const add = (text: string, label: string, description: string) => {
+    const asset = findAsset(assets, text);
+    if (asset) options.push({ asset, description, label });
+  };
+
+  if (os === "windows") {
+    add("windows-x64-setup.exe", "Windows setup (.exe)", "Standard installer for Windows x64.");
+    add("windows-x64.msi", "Windows MSI", "Package installer for managed Windows setups.");
+    add("windows-x64-ollama-setup.exe", "Windows + Ollama", "Includes Ollama for local models.");
+  }
+
+  if (os === "macos") {
+    add("macos-universal.dmg", "macOS universal DMG", "For Apple Silicon and Intel Macs.");
+  }
+
+  if (os === "linux") {
+    add("linux-x64.deb", "Debian/Ubuntu x64", "Use on most Intel or AMD Debian-based systems.");
+    add("linux-arm64.deb", "Debian/Ubuntu ARM64", "Use on ARM Debian-based systems.");
+    add("linux-x64.rpm", "Fedora/RHEL x64", "Use on most Intel or AMD RPM-based systems.");
+    add("linux-arm64.rpm", "Fedora/RHEL ARM64", "Use on ARM RPM-based systems.");
+    add("linux-x64.appimage", "AppImage x64", "Portable option; may require FUSE on some distros.");
+    add("linux-arm64.appimage", "AppImage ARM64", "Portable ARM option; may require FUSE on some distros.");
+  }
+
+  return options;
+}
+
 function InstallerOption({ asset, description, label, onSelect }: InstallerOptionProps) {
   return (
     <ButtonBase
       onClick={() => onSelect(asset)}
       sx={(theme) => ({
         display: "block",
-        flex: 1,
+        height: "100%",
         minWidth: 0,
         border: "1px solid rgba(23, 23, 23, 0.1)",
         borderRadius: 2,
@@ -126,12 +141,11 @@ export default function InstallWizard({ open, onClose }: InstallWizardProps) {
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [step, setStep] = useState<Step>("choose");
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
+  const [isCommandCopied, setCommandCopied] = useState(false);
   const os = useMemo(() => detectOs(), []);
   const osLabel = OS_LABEL[os];
-  const info = INSTALLER_INFO[os];
-
-  const standaloneAsset = useMemo(() => matchStandaloneAsset(assets, os), [assets, os]);
-  const ollamaAsset = useMemo(() => matchOllamaAsset(assets, os), [assets, os]);
+  const installCommand = INSTALL_COMMANDS[os] ?? null;
+  const installerOptions = useMemo(() => getInstallerOptions(assets, os), [assets, os]);
 
   useEffect(() => {
     if (!open) return;
@@ -143,6 +157,7 @@ export default function InstallWizard({ open, onClose }: InstallWizardProps) {
       setFetchError(null);
       setStep("choose");
       setSelectedAsset(null);
+      setCommandCopied(false);
 
       try {
         setAssets(await fetchRelease(abort.signal));
@@ -167,6 +182,16 @@ export default function InstallWizard({ open, onClose }: InstallWizardProps) {
     setStep("downloading");
   }
 
+  async function handleCopyCommand() {
+    if (!installCommand) return;
+    try {
+      await navigator.clipboard.writeText(installCommand);
+      setCommandCopied(true);
+    } catch {
+      setCommandCopied(false);
+    }
+  }
+
   function handleDownload() {
     if (!selectedAsset) return;
     window.open(selectedAsset.browser_download_url, "_blank", "noopener");
@@ -176,7 +201,7 @@ export default function InstallWizard({ open, onClose }: InstallWizardProps) {
     <Dialog
       open={open}
       onClose={onClose}
-      maxWidth="sm"
+      maxWidth="md"
       fullWidth
       slotProps={{
         backdrop: {
@@ -231,16 +256,14 @@ export default function InstallWizard({ open, onClose }: InstallWizardProps) {
             </Button>
           </DialogContent>
         </>
-      ) : !info ? (
+      ) : !installCommand && installerOptions.length === 0 ? (
         <>
           <DialogTitle sx={{ fontWeight: 600, pb: 0.5 }}>
-            {os === "linux" ? "Linux not supported yet" : "Unsupported OS"}
+            Unsupported OS
           </DialogTitle>
           <DialogContent>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              {os === "linux"
-                ? "PolyUI isn't available for Linux yet. Check back later."
-                : "Couldn't detect your operating system."}
+              Couldn't detect your operating system.
             </Typography>
             <Button
               variant="outlined"
@@ -262,7 +285,7 @@ export default function InstallWizard({ open, onClose }: InstallWizardProps) {
       ) : step === "choose" ? (
         <>
           <DialogTitle sx={{ fontWeight: 600, pb: 0.5 }}>
-            Get Started with PolyUI
+            Install PolyUI
           </DialogTitle>
           <DialogContent>
             <Chip
@@ -278,26 +301,117 @@ export default function InstallWizard({ open, onClose }: InstallWizardProps) {
               })}
             />
             <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-              Choose your setup. We'll download the right installer.
+              {os === "linux"
+                ? "Pick the package for your distro and CPU, or copy the command line installer."
+                : "Choose a download, or copy the command line installer."}
             </Typography>
-            <Stack direction={{ xs: "column", sm: "row" }} gap={2}>
-              {standaloneAsset && info.standalone && (
-                <InstallerOption
-                  asset={standaloneAsset}
-                  description={info.standalone.desc}
-                  label={info.standalone.label}
-                  onSelect={handleSelect}
-                />
-              )}
-              {ollamaAsset && info.withOllama && (
-                <InstallerOption
-                  asset={ollamaAsset}
-                  description={info.withOllama.desc}
-                  label={info.withOllama.label}
-                  onSelect={handleSelect}
-                />
-              )}
-            </Stack>
+            {installCommand && (
+              <Box
+                sx={(theme) => ({
+                  mb: 2.5,
+                  border: "1px solid rgba(23, 23, 23, 0.1)",
+                  borderRadius: 2,
+                  p: 2,
+                  ...theme.applyStyles("dark", {
+                    borderColor: "rgba(255, 255, 255, 0.1)",
+                  }),
+                })}
+              >
+                <Typography sx={{ mb: 1, fontWeight: 600 }}>
+                  Command line install
+                </Typography>
+                <Box
+                  component="code"
+                  sx={(theme) => ({
+                    display: "block",
+                    overflowX: "auto",
+                    borderRadius: 1.5,
+                    bgcolor: "#f4f4f0",
+                    px: 1.5,
+                    py: 1.25,
+                    color: "#313739",
+                    fontFamily:
+                      '"SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace',
+                    fontSize: ".78rem",
+                    lineHeight: 1.7,
+                    whiteSpace: "nowrap",
+                    ...theme.applyStyles("dark", {
+                      bgcolor: "#1e1e1e",
+                      color: "#d4d4d4",
+                    }),
+                  })}
+                >
+                  {installCommand}
+                </Box>
+                <Button
+                  variant="outlined"
+                  startIcon={<ContentCopyIcon fontSize="small" />}
+                  onClick={handleCopyCommand}
+                  sx={(theme) => ({
+                    mt: 1.5,
+                    minHeight: 0,
+                    borderColor: "rgba(23, 23, 23, 0.12)",
+                    color: "#242424",
+                    py: 0.8,
+                    ...theme.applyStyles("dark", {
+                      color: "#d0d0d0",
+                      borderColor: "rgba(255, 255, 255, 0.12)",
+                    }),
+                  })}
+                >
+                  {isCommandCopied ? "Copied" : "Copy command"}
+                </Button>
+              </Box>
+            )}
+            {installerOptions.length > 0 && (
+              <>
+                <Typography sx={{ mb: 1.25, fontWeight: 600 }}>
+                  Release downloads
+                </Typography>
+                <Box
+                  sx={{
+                    display: "grid",
+                    gridTemplateColumns: {
+                      xs: "1fr",
+                      sm: installerOptions.length > 2
+                        ? "repeat(2, minmax(0, 1fr))"
+                        : "repeat(auto-fit, minmax(0, 1fr))",
+                    },
+                    gap: 1.5,
+                  }}
+                >
+                  {installerOptions.map((option) => (
+                    <InstallerOption
+                      key={option.asset.name}
+                      asset={option.asset}
+                      description={option.description}
+                      label={option.label}
+                      onSelect={handleSelect}
+                    />
+                  ))}
+                </Box>
+              </>
+            )}
+            {installerOptions.length === 0 && (
+              <Typography variant="body2" color="text.secondary">
+                No release downloads were found for {osLabel}. Check the releases page for older builds.
+              </Typography>
+            )}
+            <Link
+              href={RELEASES_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              underline="hover"
+              sx={{
+                display: "block",
+                textAlign: "center",
+                mt: 2,
+                color: "text.secondary",
+                fontSize: ".82rem",
+              }}
+            >
+              View all releases
+            </Link>
             <Link
               href="/docs"
               underline="hover"

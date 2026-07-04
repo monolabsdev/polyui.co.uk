@@ -26,6 +26,7 @@ function CodeBlock({ children }: { children: string }) {
         m: 0,
         mt: 1.5,
         overflowX: "auto",
+        overflowWrap: "anywhere",
         border: "1px solid rgba(23, 23, 23, 0.1)",
         borderRadius: 1.5,
         bgcolor: "#f4f4f0",
@@ -36,6 +37,7 @@ function CodeBlock({ children }: { children: string }) {
           '"SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace',
         fontSize: ".82rem",
         lineHeight: 1.7,
+        whiteSpace: "pre-wrap",
         ...theme.applyStyles("dark", {
           borderColor: "rgba(255, 255, 255, 0.08)",
           bgcolor: "#1e1e1e",
@@ -228,33 +230,117 @@ export default function DocsPage() {
             <Section id="requirements" title="Requirements">
               <Typography sx={bodyCopy}>Before installing Poly UI, make sure you have:</Typography>
               <Box component="ul" sx={{ mt: 1.5, pl: 2.5, color: "text.secondary" }}>
-                <li><Typography sx={bodyCopy}>A Windows x64 PC or an Apple Silicon Mac.</Typography></li>
+                <li><Typography sx={bodyCopy}>A Windows x64 PC, macOS device, or Linux x64/arm64 machine.</Typography></li>
                 <li><Typography sx={bodyCopy}>Enough memory for the model you plan to run. Smaller models are the best place to start.</Typography></li>
                 <li><Typography sx={bodyCopy}>An internet connection for the initial download and for pulling models.</Typography></li>
                 <li><Typography sx={bodyCopy}>A local model provider such as Ollama, unless you choose the installer that includes it.</Typography></li>
               </Box>
               <Typography sx={{ ...bodyCopy, mt: 1.5 }}>
-                Linux builds are not available yet.
+                Linux downloads are available as AppImage, Debian, and RPM packages.
               </Typography>
             </Section>
 
             <Section id="installation" title="Installation">
+              <Typography sx={bodyCopy}>
+                Poly UI can be installed from the latest GitHub release, or with
+                the command line installer.
+              </Typography>
+
               <Typography component="h3" sx={{ mb: 0.75, fontSize: "1.05rem", fontWeight: 700 }}>
-                Option 1: Install Poly UI with Ollama
+                Command line install
               </Typography>
               <Typography sx={bodyCopy}>
-                This is the easiest setup for most people. Download the installer
-                labelled <strong>PolyUI + Ollama</strong>, open it, and follow the
-                prompts. Ollama is installed alongside Poly UI.
+                Linux and macOS:
+              </Typography>
+              <CodeBlock>curl -fsSL https://raw.githubusercontent.com/monolabsdev/poly-ui/main/scripts/install.sh | sh</CodeBlock>
+              <Typography sx={{ ...bodyCopy, mt: 2 }}>
+                Windows PowerShell:
+              </Typography>
+              <CodeBlock>irm https://raw.githubusercontent.com/monolabsdev/poly-ui/main/scripts/install.ps1 | iex</CodeBlock>
+
+              <Typography component="h3" sx={{ mt: 3, mb: 0.75, fontSize: "1.05rem", fontWeight: 700 }}>
+                Install from releases
+              </Typography>
+              <Typography sx={bodyCopy}>
+                Download the file that matches your operating system and CPU.
+                Use x64 for most Intel/AMD PCs, and arm64 for ARM Linux devices.
+              </Typography>
+              <Button
+                href="https://github.com/monolabsdev/poly-ui/releases/latest"
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="outlined"
+                endIcon={<ArrowOutwardIcon />}
+                sx={(theme) => ({
+                  mt: 2,
+                  minHeight: 0,
+                  borderColor: "rgba(23, 23, 23, 0.14)",
+                  color: "text.primary",
+                  py: 0.9,
+                  ...theme.applyStyles("dark", {
+                    borderColor: "rgba(255, 255, 255, 0.14)",
+                  }),
+                })}
+              >
+                Open releases
+              </Button>
+
+              <Typography component="h3" sx={{ mt: 3, mb: 0.75, fontSize: "1.05rem", fontWeight: 700 }}>
+                macOS
+              </Typography>
+              <Typography sx={bodyCopy}>
+                Download <strong>PolyUI-*-macos-universal.dmg</strong>, open the
+                disk image, and drag Poly UI into Applications.
               </Typography>
 
               <Typography component="h3" sx={{ mt: 3, mb: 0.75, fontSize: "1.05rem", fontWeight: 700 }}>
-                Option 2: Install Poly UI only
+                Windows
               </Typography>
               <Typography sx={bodyCopy}>
-                Choose the standalone <strong>PolyUI</strong> installer if Ollama
-                is already installed on your machine. If you need to install Ollama
-                separately, download it from the official Ollama website.
+                Download <strong>PolyUI-*-windows-x64-setup.exe</strong> or
+                <strong> PolyUI-*-windows-x64.msi</strong>. To install Poly UI
+                with Ollama bundled, download
+                <strong> PolyUI-*-windows-x64-ollama-setup.exe</strong>.
+              </Typography>
+
+              <Typography component="h3" sx={{ mt: 3, mb: 0.75, fontSize: "1.05rem", fontWeight: 700 }}>
+                Linux Debian/Ubuntu
+              </Typography>
+              <Typography sx={bodyCopy}>
+                Download <strong>PolyUI-*-linux-x64.deb</strong> or
+                <strong> PolyUI-*-linux-arm64.deb</strong>, then install it with:
+              </Typography>
+              <CodeBlock>sudo apt install ./PolyUI-*-linux-*.deb</CodeBlock>
+
+              <Typography component="h3" sx={{ mt: 3, mb: 0.75, fontSize: "1.05rem", fontWeight: 700 }}>
+                Linux Fedora/RHEL/openSUSE
+              </Typography>
+              <Typography sx={bodyCopy}>
+                Download <strong>PolyUI-*-linux-x64.rpm</strong> or
+                <strong> PolyUI-*-linux-arm64.rpm</strong>, then install it with:
+              </Typography>
+              <CodeBlock>sudo rpm -i PolyUI-*-linux-*.rpm</CodeBlock>
+
+              <Typography component="h3" sx={{ mt: 3, mb: 0.75, fontSize: "1.05rem", fontWeight: 700 }}>
+                Other Linux distributions
+              </Typography>
+              <Typography sx={bodyCopy}>
+                Download <strong>PolyUI-*-linux-x64.AppImage</strong> or
+                <strong> PolyUI-*-linux-arm64.AppImage</strong>, then run:
+              </Typography>
+              <CodeBlock>{`chmod +x PolyUI-*-linux-*.AppImage
+./PolyUI-*-linux-*.AppImage`}</CodeBlock>
+              <Typography sx={{ ...bodyCopy, mt: 1.5 }}>
+                AppImage support varies by distro and may require FUSE. Use the
+                Debian or RPM package when your distro supports one.
+              </Typography>
+
+              <Typography component="h3" sx={{ mt: 3, mb: 0.75, fontSize: "1.05rem", fontWeight: 700 }}>
+                Ollama
+              </Typography>
+              <Typography sx={bodyCopy}>
+                If your installer does not include Ollama and you need it,
+                download Ollama from the official website.
               </Typography>
               <Button
                 href="https://ollama.com/download"

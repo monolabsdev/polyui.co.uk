@@ -53,9 +53,9 @@ export default function HeroSection({ onDownload, shouldAnimate = true }: HeroSe
     >
       <Box
         component="img"
-        src="/assets/poly-hero-nature.png"
+        src="/assets/polyui-hero-neutral.png"
         alt=""
-        sx={(theme) => ({
+        sx={{
           position: "absolute",
           inset: 0,
           zIndex: -4,
@@ -65,38 +65,6 @@ export default function HeroSection({ onDownload, shouldAnimate = true }: HeroSe
           objectPosition: { xs: "62% center", md: "center" },
           transform: "scale(1.02)",
           opacity: 1,
-          transition: "opacity 0.4s ease",
-          ...theme.applyStyles("dark", { opacity: 0 }),
-        })}
-      />
-      <Box
-        component="img"
-        src="/assets/polyui-hero-dark.png"
-        alt=""
-        sx={(theme) => ({
-          position: "absolute",
-          inset: 0,
-          zIndex: -4,
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          objectPosition: { xs: "62% center", md: "center" },
-          transform: "scale(1.02)",
-          opacity: 0,
-          transition: "opacity 0.4s ease",
-          ...theme.applyStyles("dark", { opacity: 1 }),
-        })}
-      />
-      <Box
-        sx={{
-          position: "absolute",
-          inset: 0,
-          zIndex: -3,
-          transition: "opacity 0.4s ease",
-          background: {
-            xs: "linear-gradient(90deg, rgba(251,251,248,.98) 0%, rgba(251,251,248,.82) 55%, rgba(251,251,248,.35) 100%), linear-gradient(0deg, rgba(251,251,248,1) 0%, rgba(251,251,248,.2) 45%, rgba(251,251,248,.5) 100%)",
-            md: "linear-gradient(90deg, rgba(251,251,248,.96) 0%, rgba(251,251,248,.75) 34%, rgba(251,251,248,.2) 68%), linear-gradient(0deg, rgba(251,251,248,1) 0%, rgba(251,251,248,.18) 34%, rgba(251,251,248,.5) 100%)",
-          },
         }}
       />
       <Box
@@ -105,12 +73,10 @@ export default function HeroSection({ onDownload, shouldAnimate = true }: HeroSe
           inset: 0,
           zIndex: -3,
           transition: "opacity 0.4s ease",
-          opacity: 0,
-          background: {
-            xs: "linear-gradient(90deg, rgba(18,18,18,.96) 0%, rgba(18,18,18,.82) 55%, rgba(18,18,18,.5) 100%), linear-gradient(0deg, rgba(18,18,18,.98) 0%, rgba(18,18,18,.35) 45%, rgba(18,18,18,.55) 100%)",
-            md: "linear-gradient(90deg, rgba(18,18,18,.94) 0%, rgba(18,18,18,.75) 34%, rgba(18,18,18,.3) 68%), linear-gradient(0deg, rgba(18,18,18,.98) 0%, rgba(18,18,18,.28) 34%, rgba(18,18,18,.55) 100%)",
-          },
-          ...theme.applyStyles("dark", { opacity: 1 }),
+          backgroundColor: "rgba(251,251,248,.56)",
+          ...theme.applyStyles("dark", {
+            backgroundColor: "rgba(18,18,18,.58)",
+          }),
         })}
       />
 

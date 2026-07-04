@@ -9,25 +9,14 @@ import { useEffect, useMemo, useState } from "react";
 import {
   fetchRelease,
   detectOs,
+  matchStandaloneAsset,
   OS_LABEL,
   type Asset,
   type OsType,
 } from "./releases";
 
 function matchAsset(assets: Asset[], os: OsType): Asset | null {
-  if (os === "windows") {
-    const standalone = assets.find(
-      (a) => a.name.includes("x64-setup.exe") && !a.name.includes("Ollama")
-    );
-    if (standalone) return standalone;
-    return assets.find((a) => a.name.includes("x64-setup.exe")) ?? null;
-  }
-  if (os === "macos") {
-    const dmg = assets.find((a) => a.name.endsWith(".dmg"));
-    if (dmg) return dmg;
-    return assets.find((a) => a.name.endsWith(".pkg")) ?? null;
-  }
-  return null;
+  return matchStandaloneAsset(assets, os);
 }
 
 interface DownloadDialogProps {
@@ -162,13 +151,11 @@ export default function DownloadDialog({ open, onClose }: DownloadDialogProps) {
       ) : (
         <>
           <DialogTitle sx={{ fontWeight: 600, pb: 0.5 }}>
-            {os === "linux" ? "Linux not supported yet" : "No download found"}
+            No download found
           </DialogTitle>
           <DialogContent>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              {os === "linux"
-                ? "PolyUI isn't available for Linux yet. Check back later."
-                : `Couldn't find an installer for ${osLabel}.`}
+              Couldn't find an installer for {osLabel}.
             </Typography>
             <Button
               variant="outlined"
